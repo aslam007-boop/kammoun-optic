@@ -12,6 +12,9 @@ import imgVue from "@/assets/collection-vue.jpg";
 import imgSol from "@/assets/collection-solaires.jpg";
 import imgLen from "@/assets/collection-lentilles.jpg";
 import imgEssai from "@/assets/essayage.jpg";
+import pClassique from "@/assets/lunettes-classique.webp.asset.json";
+import pTitane from "@/assets/lunettes-titane.webp.asset.json";
+import pAcetate from "@/assets/lunettes-acetate.webp.asset.json";
 import { AuroraBackground, BlurText, ShimmerButton, AnimatedTooltip, Counter, useSmoothScroll } from "@/components/effects";
 
 const TITLE = "Kammoun Optic (OKO) — Opticien à Sfax";
@@ -33,7 +36,12 @@ export const Route = createFileRoute("/")({
 
 const IG = "https://www.instagram.com/kammounopticoko";
 const FB = "https://www.facebook.com/KammounOpticoko";
-const WA = "https://wa.me/216XXXXXXXX";
+const WA = "https://wa.me/21622978655";
+const TEL = "tel:+21622978655";
+const PHONE = "22 978 655";
+const categories = [
+  ["Lunettes de vue", "#catalogue"], ["Lunettes solaires", "#collections"], ["Lentilles de contact", "#collections"],
+] as const;
 const links = [
   ["Accueil", "#accueil"], ["Collections", "#collections"], ["Services", "#services"],
   ["Essayage", "#essayage"], ["Avis", "#avis"], ["Contact", "#contact"],
@@ -45,30 +53,99 @@ function Logo({ className = "h-10" }: { className?: string }) {
 
 function Navbar() {
   const [open, setOpen] = useState(false);
+  const [sub, setSub] = useState(false);
   return (
     <header className="fixed inset-x-0 top-0 z-50 border-b border-gold/15 bg-navy/70 backdrop-blur-xl">
       <div className="mx-auto flex h-18 max-w-7xl items-center justify-between px-5 py-3">
         <a href="#accueil"><Logo /></a>
-        <nav className="hidden items-center gap-8 lg:flex">
-          {links.map(([l, h]) => (
-            <a key={h} href={h} className="text-sm text-cream/80 transition-colors hover:text-gold">{l}</a>
-          ))}
+        <nav className="hidden items-center gap-7 lg:flex">
+          {links.map(([l, h]) =>
+            h === "#collections" ? (
+              <div key={h} className="group relative">
+                <button className="flex items-center gap-1 text-sm text-cream/80 transition-colors hover:text-gold">
+                  {l} <ChevronDown size={14} className="transition-transform group-hover:rotate-180" />
+                </button>
+                <div className="invisible absolute left-1/2 top-full -translate-x-1/2 pt-3 opacity-0 transition-all group-hover:visible group-hover:opacity-100">
+                  <div className="w-56 rounded-xl border border-gold/30 bg-navy p-2 shadow-2xl">
+                    {categories.map(([cl, ch]) => (
+                      <a key={cl} href={ch} className="block rounded-lg px-4 py-2.5 text-sm text-cream/85 hover:bg-gold/10 hover:text-gold">{cl}</a>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <a key={h} href={h} className="text-sm text-cream/80 transition-colors hover:text-gold">{l}</a>
+            ),
+          )}
         </nav>
         <div className="hidden items-center gap-4 lg:flex">
-          <a href={IG} target="_blank" rel="noreferrer" aria-label="Instagram" className="text-cream/80 hover:text-gold"><Instagram size={20} /></a>
-          <ShimmerButton href="#contact" className="px-5 py-2.5">Prendre rendez-vous</ShimmerButton>
+          <a href={TEL} className="flex items-center gap-2 text-sm text-cream/85 hover:text-gold"><Phone size={16} className="text-gold" />{PHONE}</a>
+          <ShimmerButton href={WA} className="px-5 py-2.5">Prendre rendez-vous</ShimmerButton>
         </div>
         <button className="text-cream lg:hidden" aria-label="Menu" onClick={() => setOpen(!open)}>{open ? <X /> : <Menu />}</button>
       </div>
       {open && (
-        <nav className="flex flex-col gap-4 border-t border-gold/15 bg-navy px-5 py-6 lg:hidden">
-          {links.map(([l, h]) => (
-            <a key={h} href={h} onClick={() => setOpen(false)} className="text-cream/90">{l}</a>
-          ))}
-          <a href={IG} target="_blank" rel="noreferrer" className="flex items-center gap-2 text-gold"><Instagram size={18} /> @kammounopticoko</a>
+        <nav className="flex max-h-[80vh] flex-col gap-4 overflow-y-auto border-t border-gold/15 bg-navy px-5 py-6 lg:hidden">
+          {links.map(([l, h]) =>
+            h === "#collections" ? (
+              <div key={h}>
+                <button onClick={() => setSub(!sub)} aria-expanded={sub} className="flex w-full items-center justify-between text-cream/90">
+                  {l} <ChevronDown size={16} className={`transition-transform ${sub ? "rotate-180" : ""}`} />
+                </button>
+                {sub && (
+                  <div className="mt-3 flex flex-col gap-3 border-l border-gold/30 pl-4">
+                    {categories.map(([cl, ch]) => (
+                      <a key={cl} href={ch} onClick={() => setOpen(false)} className="text-sm text-cream/75">{cl}</a>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ) : (
+              <a key={h} href={h} onClick={() => setOpen(false)} className="text-cream/90">{l}</a>
+            ),
+          )}
+          <a href={TEL} className="flex items-center gap-2 text-gold"><Phone size={18} /> {PHONE}</a>
+          <a href={WA} target="_blank" rel="noreferrer" className="flex items-center gap-2 text-gold"><MessageCircle size={18} /> Prendre rendez-vous</a>
         </nav>
       )}
     </header>
+  );
+}
+
+const products = [
+  { id: "classique-elegant", name: "Modèle Classique Élégant", brand: "Marque à venir", price: "— DT", image: pClassique.url },
+  { id: "moderne-titane", name: "Modèle Moderne Titane", brand: "Marque à venir", price: "— DT", image: pTitane.url },
+  { id: "acetate-premium", name: "Modèle Acétate Premium", brand: "Marque à venir", price: "— DT", image: pAcetate.url },
+];
+
+function Catalogue() {
+  return (
+    <section id="catalogue" className="relative bg-navy px-5 py-28">
+      <div className="mx-auto max-w-7xl">
+        <SectionTitle kicker="Catalogue" title="Lunettes de vue" />
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
+          {products.map((p) => (
+            <article key={p.id} className="product-card group flex flex-col overflow-hidden rounded-2xl border border-gold/25 bg-cream/5 transition-all duration-500 hover:-translate-y-2 hover:border-gold/70 hover:shadow-[0_0_40px_-8px_var(--gold)]">
+              <div className="aspect-square overflow-hidden bg-cream">
+                <img src={p.image} alt={p.name} loading="lazy" className="h-full w-full object-contain p-6 transition-transform duration-700 group-hover:scale-105" />
+              </div>
+              <div className="flex flex-1 flex-col p-6">
+                <p className="text-xs uppercase tracking-[0.25em] text-gold">{p.brand}</p>
+                <h3 className="mt-2 text-2xl text-cream">{p.name}</h3>
+                <p className="mt-1 font-display text-lg text-cream/70">{p.price}</p>
+                <a
+                  href={`${WA}?text=${encodeURIComponent(`Bonjour, je suis intéressé par ${p.name}`)}`}
+                  target="_blank" rel="noreferrer"
+                  className="mt-6 inline-flex items-center justify-center gap-2 rounded-full bg-gold px-5 py-3 text-sm font-semibold text-navy transition-opacity hover:opacity-90"
+                >
+                  <MessageCircle size={16} /> Demander ce modèle
+                </a>
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
   );
 }
 
@@ -84,8 +161,8 @@ function Hero() {
             Opticien expert — Immeuble Donia, Avenue du 14 Janvier, Sfax
           </p>
           <div className="hero-in mt-10 flex flex-col gap-4 sm:flex-row">
-            <ShimmerButton href="#collections">Découvrir la collection <ArrowRight size={16} /></ShimmerButton>
-            <ShimmerButton href="#contact" variant="outline">Prendre rendez-vous</ShimmerButton>
+            <ShimmerButton href="#catalogue">Découvrir la collection <ArrowRight size={16} /></ShimmerButton>
+            <ShimmerButton href={WA} variant="outline">Prendre rendez-vous</ShimmerButton>
           </div>
           <a href="#collections" aria-label="Défiler" className="hero-in mt-16 flex flex-col items-center gap-2 text-cream/50">
             <span className="flex h-10 w-6 justify-center rounded-full border border-gold/40 pt-2">
@@ -164,7 +241,7 @@ function Essayage() {
               <li key={x} className="flex items-center gap-3"><ScanFace className="text-gold" size={20} />{x}</li>
             ))}
           </ul>
-          <div className="mt-10"><ShimmerButton href="#contact">Réserver un essayage</ShimmerButton></div>
+          <div className="mt-10"><ShimmerButton href={WA}>Réserver un essayage</ShimmerButton></div>
         </div>
         <div className="reveal parallax relative">
           <div className="absolute -inset-4 rounded-3xl bg-gold/20 blur-3xl" />
@@ -253,7 +330,7 @@ function Contact() {
         <div className="grid gap-8 lg:grid-cols-2">
           <div className="reveal space-y-5 rounded-2xl border border-gold/30 bg-navy p-8 text-cream">
             <p className="flex gap-3"><MapPin className="shrink-0 text-gold" />Immeuble Donia, Avenue du 14 Janvier, Sfax 3027, Tunisie</p>
-            <p className="flex gap-3"><Phone className="shrink-0 text-gold" />XX XXX XXX</p>
+            <a href={TEL} className="flex gap-3 hover:text-gold"><Phone className="shrink-0 text-gold" />{PHONE}</a>
             <div className="flex gap-3"><Clock className="shrink-0 text-gold" /><div><p>Lundi – Samedi : 09h00 – 19h00</p><p className="text-cream/60">Dimanche : fermé</p></div></div>
             <div className="flex flex-wrap gap-3 pt-2">
               <a href={IG} target="_blank" rel="noreferrer" className="flex items-center gap-2 rounded-full border border-gold/40 px-4 py-2 text-sm hover:bg-gold/10"><Instagram size={16} /> Instagram</a>
@@ -303,6 +380,10 @@ function Index() {
       gsap.utils.toArray<HTMLElement>(".reveal").forEach((el) => {
         gsap.from(el, { y: 40, opacity: 0, duration: 1, ease: "power3.out", scrollTrigger: { trigger: el, start: "top 88%" } });
       });
+      gsap.from(".product-card", {
+        y: 60, opacity: 0, duration: 0.9, stagger: 0.15, ease: "power3.out",
+        scrollTrigger: { trigger: "#catalogue", start: "top 75%" },
+      });
       gsap.utils.toArray<HTMLElement>(".parallax").forEach((el) => {
         gsap.to(el, { yPercent: -10, ease: "none", scrollTrigger: { trigger: el, scrub: true } });
       });
@@ -314,6 +395,7 @@ function Index() {
       <Navbar />
       <Hero />
       <Marquee />
+      <Catalogue />
       <Collections />
       <Essayage />
       <Services />
